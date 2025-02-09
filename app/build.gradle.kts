@@ -53,11 +53,11 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
-
-    implementation(libs.datastore)
-
     implementation(libs.kotlinx.serialization)
-    
+
+    implementation(libs.exoplayer.core)
+    implementation(libs.exoplayer.ui)
+
     implementation(libs.dagger.lib)
     ksp(libs.dagger.compiler)
     implementation(libs.hilt.lib)
@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.room.lib)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+    implementation(libs.datastore)
 
     testImplementation(libs.junit)
 
