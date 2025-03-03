@@ -9,8 +9,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import dev.runo.harmony.ui.navigation.AppNavigation
-import dev.runo.harmony.ui.theme.HarmonyTheme
+import dev.runo.harmony.presentation.ui.navigation.AppNavigation
+import dev.runo.harmony.presentation.ui.theme.HarmonyTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

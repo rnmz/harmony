@@ -1,4 +1,4 @@
-package dev.runo.harmony.ui.theme
+package dev.runo.harmony.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

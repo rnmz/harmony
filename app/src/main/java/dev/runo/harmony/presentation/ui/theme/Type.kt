@@ -1,4 +1,4 @@
-package dev.runo.harmony.ui.theme
+package dev.runo.harmony.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
