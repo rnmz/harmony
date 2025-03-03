@@ -9,4 +9,5 @@
 TODO: ADD IMAGES
 
 Credits:
-[Runo @rnmz](https://github.com/rnmz)
+[app / Runo @rnmz](https://github.com/rnmz)
+[app icon / icons8 icons8.com](https://icons8.com)
