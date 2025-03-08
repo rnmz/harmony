@@ -1,7 +1,7 @@
 package dev.runo.harmony.common
 
-sealed interface WorkStatus<T> {
+sealed interface WorkStatus<out T> {
     data class Success<T>(val data: T): WorkStatus<T>
-    data class Error(val error: ErrorType, val message: String? = null): WorkStatus<Nothing>
+    data class Error(val error: ErrorType? = null, val message: String? = null): WorkStatus<Nothing>
     data object Loading: WorkStatus<Nothing>
 }
