@@ -49,6 +49,43 @@ class MusicFileApi @Inject constructor(context: Context) {
         }
     }.flowOn(Dispatchers.IO)
 
+    fun searchMusicByFilters(
+        author: String? = null,
+        title: String? = null
+    ): Flow<MusicApiModel> = flow {
+        val selectionParts = mutableListOf<String>()
+        val selectionArgs = mutableListOf<String>()
+
+        if (!author.isNullOrBlank()) {
+            selectionParts.add("${AudioStore.ARTIST} = ?")
+            selectionArgs.add(author)
+        }
+        if (!title.isNullOrBlank()) {
+            selectionParts.add("${AudioStore.TITLE} = ?")
+            selectionArgs.add(title)
+        }
+
+        val selectionString = selectionParts.takeIf { it.isNotEmpty() }?.joinToString { " AND " }
+
+        val cursor = resolver.query(
+            AudioStore.EXTERNAL_CONTENT_URI,
+            projection,
+            selectionString,
+            selectionArgs.toTypedArray(),
+             "${AudioStore._ID} ASC"
+        )
+
+        cursor?.use {
+            if (it.moveToFirst()) {
+                do {
+                    emit(
+                        rawToMusicModel(it)
+                    )
+                } while (it.moveToNext())
+            }
+        }
+    }.flowOn(Dispatchers.IO)
+
     @SuppressLint("Range")
     private fun rawToMusicModel(cursor: Cursor): MusicApiModel {
         return MusicApiModel(

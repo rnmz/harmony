@@ -27,7 +27,7 @@ class LocalMusicRepository @Inject constructor(
     override suspend fun getAllMusic(sortType: Boolean): Flow<WorkStatus<Music>> = musicFileApi
         .getAllMusic(sortType.convertToSortType())
         .onStart {
-            delay(1000L)
+            delay(500L)
             WorkStatus.Loading
         }
         .onEmpty {
@@ -36,4 +36,22 @@ class LocalMusicRepository @Inject constructor(
         .map {
             WorkStatus.Success(ConvertMusicModel.toDomainModel(it))
         }
+
+    override suspend fun searchByFilters(
+        author: String?,
+        title: String?,
+        genres: List<String>?
+    ): Flow<WorkStatus<Music>> = musicFileApi
+        .searchMusicByFilters()
+        .onStart {
+            delay(500L)
+            WorkStatus.Loading
+        }
+        .onEmpty {
+            WorkStatus.Error(ErrorType.Local.NOT_FOUND)
+        }
+        .map {
+            WorkStatus.Success(ConvertMusicModel.toDomainModel(it))
+        }
+
 }
