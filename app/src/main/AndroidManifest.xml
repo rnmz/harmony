@@ -22,6 +22,14 @@
         android:theme="@style/Theme.Harmony"
         tools:targetApi="35">
 
+        <service
+            android:name=".presentation.service.MusicForegroundService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@drawable/ic_launcher_foreground"
+        />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
