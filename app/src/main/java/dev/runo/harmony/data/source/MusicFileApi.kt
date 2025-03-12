@@ -65,7 +65,7 @@ class MusicFileApi @Inject constructor(context: Context) {
             selectionArgs.add(title)
         }
 
-        val selectionString = selectionParts.takeIf { it.isNotEmpty() }?.joinToString { " AND " }
+        val selectionString = selectionParts.takeIf { it.isNotEmpty() }?.joinToString (" AND ")
 
         val cursor = resolver.query(
             AudioStore.EXTERNAL_CONTENT_URI,
