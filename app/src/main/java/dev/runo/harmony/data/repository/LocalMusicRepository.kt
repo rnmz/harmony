@@ -22,7 +22,7 @@ class LocalMusicRepository @Inject constructor(
 ) : MusicRepository {
 
     private val _currentMusic = MutableSharedFlow<Music>(replay = 1)
-    val currentMusic: SharedFlow<Music> = _currentMusic.asSharedFlow()
+    private val currentMusic: SharedFlow<Music> = _currentMusic.asSharedFlow()
 
     override suspend fun getAllMusic(sortType: Boolean): Flow<WorkStatus<Music>> = musicFileApi
         .getAllMusic(sortType.convertToSortType())
@@ -54,4 +54,9 @@ class LocalMusicRepository @Inject constructor(
             WorkStatus.Success(ConvertMusicModel.toDomainModel(it))
         }
 
+    override fun getCurrentMusicAsFlow(): SharedFlow<Music> = currentMusic
+
+    override suspend fun setCurrentMusic(music: Music) {
+        _currentMusic.emit(music)
+    }
 }
