@@ -14,43 +14,47 @@ import androidx.core.app.ServiceCompat
 import androidx.core.content.getSystemService
 import dagger.hilt.android.AndroidEntryPoint
 import dev.runo.harmony.R
+import dev.runo.harmony.domain.repository.MusicRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MusicForegroundService : Service() {
 
     private val binder = MusicBinder()
+    private val serviceScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+
+    @Inject
+    lateinit var musicRepository: MusicRepository
 
     private val notificationChannelId = "MUSIC_PLAYER_NOTIFICATION"
     private val notificationChannelName = "Music service"
-
     private val notificationId = 1024
-
-    private val _currentMusicName = MutableStateFlow("No name")
-    private val currentMusicName = _currentMusicName.asStateFlow()
+    private val currentMusicName = musicRepository.getCurrentMusicAsFlow()
 
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        serviceScope.launch {
             currentMusicName.collectLatest {
-                updateNotification(it)
+                updateNotification("${it.author} - ${it.title}")
             }
         }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
+        val music = currentMusicName.replayCache.last()
+
         ServiceCompat.startForeground(
             this,
             notificationId,
-            createNotification(currentMusicName.value),
+            createNotification("${music.author} - ${music.title}"),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
             }
@@ -82,6 +86,7 @@ class MusicForegroundService : Service() {
      */
     private fun createNotification(musicName: String): Notification {
         return NotificationCompat.Builder(this, notificationChannelId)
+            .setContentTitle(musicName)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(getString(R.string.app_name))
             .build()
@@ -91,10 +96,6 @@ class MusicForegroundService : Service() {
         val channel = NotificationChannel(notificationChannelId, notificationChannelName, NotificationManager.IMPORTANCE_DEFAULT)
         val notificationManager = getSystemService<NotificationManager>()!!
         notificationManager.createNotificationChannel(channel)
-    }
-
-    fun updateMusicName(name: String) {
-        _currentMusicName.value = name
     }
 
     private fun updateNotification(name: String) {
